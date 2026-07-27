@@ -4,12 +4,15 @@ import time
 import asyncio
 import colorsys
 import os
+
 mf = os.path.join(os.path.expanduser('~'),'Music')
 os.makedirs(mf, exist_ok=True)
 os.chdir(mf)
+
 def aaditya(page: ft.Page):
-    ft.title = "Music Downloader"
+    ft.title = "Media-Fetch"
     page.vertical_alignment = ft.MainAxisAlignment.START
+    
     def rfsh(e):
         l.opacity = 1
         b.disabled = False
@@ -20,6 +23,7 @@ def aaditya(page: ft.Page):
         l.value = ""
         l1.color = "#d4d101"
         page.update()
+        
     def tgl(e):
         page.theme_mode = ft.ThemeMode.DARK if page.theme_mode == ft.ThemeMode.LIGHT else ft.ThemeMode.LIGHT
         tb.icon = ft.Icons.DARK_MODE if tb.icon == ft.Icons.SUNNY else ft.Icons.SUNNY
@@ -30,11 +34,13 @@ def aaditya(page: ft.Page):
         lbr.color  = "#FCFCFC" if lbr.color == "#343433" else "#343433"
         rb.bgcolor = "#CAE3F3" if rb.bgcolor == "#12181C" else "#12181C"
         page.update()
+        
     def shrt(e : ft.KeyboardEvent):
         if ((e.key == 'T') & (e.ctrl == True)):
             tgl(e)
         elif((e.key == "R")&(e.ctrl == True)):
             rfsh(e)      
+            
     def dld(e):
         lbr.disabled = True
         l.opacity = 0.1
@@ -45,20 +51,31 @@ def aaditya(page: ft.Page):
         page.update()
         a = l.value
         url = (a.partition("&"))[0]
-        dc = {
-            'format': 'bestaudio/best',
-            'outtmpl': '%(title)s.%(ext)s',
-            'writethumbnail': True,
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': f'{lbr.value}',
-            },
-            {
-                'key': 'EmbedThumbnail',
+
+        if "MP3" in dd1.selected:
+            dc = {
+                'format': 'bestaudio/best',
+                'outtmpl': '%(title)s.%(ext)s',
+                'writethumbnail': True,
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': f'{lbr.value}',
+                },
+                {
+                    'key': 'EmbedThumbnail',
+                }],
             }
-        ],
-        }
+        elif "MP4" in dd1.selected:
+            dc = {
+                'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+                'outtmpl': '%(title)s.%(ext)s',
+                'writethumbnail': True,
+                'postprocessors': [{
+                    'key': 'EmbedThumbnail',
+                }],
+            }
+            
         try:
             with yt_dlp.YoutubeDL(dc) as ydl:
                 dct = ydl.extract_info(url,download=True)
@@ -110,8 +127,9 @@ def aaditya(page: ft.Page):
         l1.color = "#d4d101"
         as1.content = cnt1
         page.update()
+        
     ll = ft.Text(
-                value="Music Downloader", 
+                value="Media-Fetch", 
                  size=50, color="#e36e14",
                  weight=ft.FontWeight.BOLD
                  )
@@ -159,6 +177,7 @@ def aaditya(page: ft.Page):
     l1err = ft.Text(value="ERROR", size=30, color="#ff0000")
     l1rfrsh = ft.Text(value="Refreshing", size=30, color="#037eb7")
     l1ds = ft.Text(value="Download Successful", size=30, color="#04d200")
+    
     cnt1 = ft.Container(
         l1,
         alignment=ft.alignment.center,
@@ -197,6 +216,7 @@ def aaditya(page: ft.Page):
         switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
         switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
     ) 
+    
     def browse(e: ft.FilePickerResultEvent):
         os.chdir(f"{e.path}")
     fp = ft.FilePicker(on_result=browse)
@@ -205,6 +225,7 @@ def aaditya(page: ft.Page):
         "Select Directory",icon=ft.Icons.FOLDER,
         on_click=lambda _: fp.get_directory_path()
     )
+    
     async def colcyc():
         i = 0
         h = 0
@@ -217,30 +238,51 @@ def aaditya(page: ft.Page):
             if h == 1:
                 h = 0
             i += 1
-            page.update()
+            ll.update()
+            l.update()
             await asyncio.sleep(0.05)
+            
     async def txtcyc():
         msc = "🎵🎧🎷🎸🎹🎺🎻🎶"
         while True:
             l0.value = msc[-1] + msc[:-1]
             msc = msc[-1] + msc[:-1]
-            page.update()
+            l0.update()
             await asyncio.sleep(0.5)
+            
     page.run_task(txtcyc)
     page.run_task(colcyc)
+    
+    def seg_change(e):
+        if "MP4" in dd1.selected:
+            lbr.disabled = True
+        else:
+            lbr.disabled = False
+        lbr.update()
+        dd1.update()
+
+    dd1 = ft.SegmentedButton(
+        selected={"MP3"},
+        on_change=seg_change,
+        segments=[
+            ft.Segment(value="MP3", label=ft.Text("MP3")),
+            ft.Segment(value="MP4", label=ft.Text("MP4")),
+        ],
+    )
     
     page.on_keyboard_event = shrt
     tb = ft.ElevatedButton(text="LIGHT",icon=ft.Icons.SUNNY, on_click = tgl)
     b = ft.ElevatedButton(text="Download", icon=ft.Icons.MUSIC_NOTE, on_click=dld)
     rb = ft.FloatingActionButton(icon=ft.Icons.LOOP, on_click=rfsh,mini=True,bgcolor="#12181C")
+    
     page.add(
         ft.Row([tb],alignment=ft.MainAxisAlignment.END),
         ft.Row([ll],alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([l0], alignment=ft.MainAxisAlignment.CENTER,),
-        ft.Row([l,lbr], alignment=ft.MainAxisAlignment.CENTER),
+        ft.Row([dd1,l,lbr], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([b,rb,dirb], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([l2,l3], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([as1], alignment=ft.MainAxisAlignment.CENTER,height=150),
     )
-ft.app(target = aaditya,
-       view=ft.AppView.FLET_APP)
+
+ft.app(target = aaditya, view=ft.AppView.FLET_APP)
