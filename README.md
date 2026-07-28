@@ -11,6 +11,7 @@ This app requires **Flet v0.28.3** specifically.
 Install all required packages with:
 ```bash
 pip install -r requirements.txt
+```
 
 # Media-Fetch: YouTube Downloader
 
