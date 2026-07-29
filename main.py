@@ -75,7 +75,7 @@ def aaditya(page: ft.Page):
         a = l.value
         url = (a.partition("&"))[0]
 
-        if dd1.selected_index == 1:
+        if dd1.selected_index == 0:
             dc = {
                 'format': 'bestaudio/best',
                 'outtmpl': '%(title)s.%(ext)s',
@@ -90,7 +90,7 @@ def aaditya(page: ft.Page):
                     'key': 'EmbedThumbnail',
                 }],
             }
-        elif dd1.selected_index == 2:
+        elif dd1.selected_index == 1:
             dc = {
                 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
                 'outtmpl': '%(title)s.%(ext)s',
@@ -100,7 +100,7 @@ def aaditya(page: ft.Page):
                     'key': 'EmbedThumbnail',
                 }],
             }
-        elif dd1.selected_index == 3:
+        elif dd1.selected_index == 2:
                     dc = {
                         'format': 'bestvideo',
                         'outtmpl': '%(title)s.%(ext)s',
@@ -150,6 +150,7 @@ def aaditya(page: ft.Page):
         lbr.disabled = False
         l.opacity = 1
         pb.visible = False
+        pb_text.visible = False
         page.update()
         time.sleep(3)
         l1.value = "Refreshing"
