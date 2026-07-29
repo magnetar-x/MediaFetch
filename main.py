@@ -75,6 +75,15 @@ def aaditya(page: ft.Page):
                     'key': 'EmbedThumbnail',
                 }],
             }
+        elif "Only Vid" in dd1.selected:
+                    dc = {
+                        'format': 'bestvideo',
+                        'outtmpl': '%(title)s.%(ext)s',
+                        'writethumbnail': True,
+                        'postprocessors': [{
+                            'key': 'EmbedThumbnail',
+                        }],
+                    }
             
         try:
             with yt_dlp.YoutubeDL(dc) as ydl:
@@ -254,7 +263,7 @@ def aaditya(page: ft.Page):
     page.run_task(colcyc)
     
     def seg_change(e):
-        if "MP4" in dd1.selected:
+        if "MP4" or "Only Vid" in dd1.selected:
             lbr.disabled = True
         else:
             lbr.disabled = False
@@ -267,6 +276,7 @@ def aaditya(page: ft.Page):
         segments=[
             ft.Segment(value="MP3", label=ft.Text("MP3")),
             ft.Segment(value="MP4", label=ft.Text("MP4")),
+            ft.Segment(value="Only Vid", label=ft.Text("Only Video")),
         ],
     )
     
