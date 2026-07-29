@@ -21,6 +21,7 @@ def aaditya(page: ft.Page):
         lbr.disabled = False
         pb.visible = False
         pb_text.visible = False
+        frmt_indic.visible = False
         l1.value = "APP READY"
         l.value = ""
         l1.color = "#d4d101"
@@ -143,6 +144,14 @@ def aaditya(page: ft.Page):
         l3.value = t
         l3.color = "#00bb00"
         l3.visible = True
+        frmt_indic.visible = True
+        if dd1.selected_index == 0:
+            frmt = "MP3"
+        elif dd1.selected_index == 1:
+            frmt = "MP4"
+        else :
+            frmt = "Only Video"
+        frmt_indic.value = frmt
         l2.visible = True
         l1.visible = True
         as1.content = cnt5
@@ -186,6 +195,12 @@ def aaditya(page: ft.Page):
                 value=" ",
                  size=30,
                  color="#00ff00",
+                 visible=False
+                 )
+    frmt_indic = ft.Text(
+                value=" ",
+                 size=30,
+                 color="#ff0080",
                  visible=False
                  )
     l = ft.TextField(width=500,
@@ -336,6 +351,7 @@ def aaditya(page: ft.Page):
         ft.Row([pb, pb_text], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([b,rb,dirb,dd1], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([l2,l3], alignment=ft.MainAxisAlignment.CENTER),
+        ft.Row([frmt_indic], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([as1], alignment=ft.MainAxisAlignment.CENTER,height=150),
     )
 
