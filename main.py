@@ -19,6 +19,8 @@ def aaditya(page: ft.Page):
         l2.visible = False
         l3.visible = False
         lbr.disabled = False
+        pb.visible = False
+        pb_text.visible = False
         l1.value = "APP READY"
         l.value = ""
         l1.color = "#d4d101"
@@ -40,7 +42,23 @@ def aaditya(page: ft.Page):
             tgl(e)
         elif((e.key == "R")&(e.ctrl == True)):
             rfsh(e)      
-            
+
+    def progress_hook(d):
+        if d['status'] == 'downloading':
+            total = d.get('total_bytes') or d.get('total_bytes_estimate')
+            if total:
+                percent = d.get('downloaded_bytes', 0) / total
+                pb.value = percent
+                pb_text.value = f"{percent:.1%}"
+            else:
+                pb.value = None
+                pb_text.value = "Downloading..."
+            page.update()
+        elif d['status'] == 'finished':
+            pb.value = 1.0
+            pb_text.value = "Processing..."
+            page.update()
+         
     def dld(e):
         lbr.disabled = True
         l.opacity = 0.1
@@ -48,6 +66,11 @@ def aaditya(page: ft.Page):
         l1.value = "Downloading!"
         l1.color = "#9900aa"
         as1.content = cnt2
+        pb.visible = True
+        pb_text.visible = True
+        pb.value = 0
+        pb_text.value = "0%"
+        page.update()
         page.update()
         a = l.value
         url = (a.partition("&"))[0]
@@ -57,6 +80,7 @@ def aaditya(page: ft.Page):
                 'format': 'bestaudio/best',
                 'outtmpl': '%(title)s.%(ext)s',
                 'writethumbnail': True,
+                'progress_hooks': [progress_hook],
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
@@ -71,6 +95,7 @@ def aaditya(page: ft.Page):
                 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
                 'outtmpl': '%(title)s.%(ext)s',
                 'writethumbnail': True,
+                'progress_hooks': [progress_hook],
                 'postprocessors': [{
                     'key': 'EmbedThumbnail',
                 }],
@@ -80,6 +105,7 @@ def aaditya(page: ft.Page):
                         'format': 'bestvideo',
                         'outtmpl': '%(title)s.%(ext)s',
                         'writethumbnail': True,
+                        'progress_hooks': [progress_hook],
                         'postprocessors': [{
                             'key': 'EmbedThumbnail',
                         }],
@@ -96,6 +122,7 @@ def aaditya(page: ft.Page):
             l2.visible = True
             l3.visible = True
             as1.content = cnt3
+            pb.visible = False
             page.update()
             time.sleep(1)
             l1.value = "Refreshing"
@@ -122,6 +149,7 @@ def aaditya(page: ft.Page):
         b.disabled = False
         lbr.disabled = False
         l.opacity = 1
+        pb.visible = False
         page.update()
         time.sleep(3)
         l1.value = "Refreshing"
@@ -181,6 +209,8 @@ def aaditya(page: ft.Page):
         width=80,
         text_align="center",
     )
+    pb = ft.ProgressBar(width=400, value=0, visible=False, color="#e36e14")
+    pb_text = ft.Text(value="0%", size=16, visible=False)
     l1 = ft.Text(value="APP READY", size=30, color="#d4d101") 
     l1dld = ft.Text(value="Downloading", size=30, color="#9900aa")
     l1err = ft.Text(value="ERROR", size=30, color="#ff0000")
@@ -282,15 +312,27 @@ def aaditya(page: ft.Page):
     )
     
     page.on_keyboard_event = shrt
-    tb = ft.ElevatedButton(text="LIGHT",icon=ft.Icons.SUNNY, on_click = tgl)
-    b = ft.ElevatedButton(text="Download", icon=ft.Icons.MUSIC_NOTE, on_click=dld)
-    rb = ft.FloatingActionButton(icon=ft.Icons.LOOP, on_click=rfsh,mini=True,bgcolor="#12181C")
+    tb = ft.ElevatedButton(
+        text="LIGHT",
+        icon=ft.Icons.SUNNY, 
+        on_click = tgl
+        )
+    b = ft.ElevatedButton(
+        text="Download", 
+        icon=ft.Icons.MUSIC_NOTE, 
+        on_click=dld)
+    rb = ft.FloatingActionButton(
+        icon=ft.Icons.LOOP, 
+        on_click=rfsh,mini=True,
+        bgcolor="#12181C"
+        )
     
     page.add(
         ft.Row([tb],alignment=ft.MainAxisAlignment.END),
         ft.Row([ll],alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([l0], alignment=ft.MainAxisAlignment.CENTER,),
         ft.Row([l,lbr], alignment=ft.MainAxisAlignment.CENTER),
+        ft.Row([pb, pb_text], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([b,rb,dirb,dd1], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([l2,l3], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([as1], alignment=ft.MainAxisAlignment.CENTER,height=150),
