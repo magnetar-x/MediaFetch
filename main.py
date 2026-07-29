@@ -52,7 +52,7 @@ def aaditya(page: ft.Page):
         a = l.value
         url = (a.partition("&"))[0]
 
-        if "MP3" in dd1.selected:
+        if dd1.selected_index == 1:
             dc = {
                 'format': 'bestaudio/best',
                 'outtmpl': '%(title)s.%(ext)s',
@@ -66,7 +66,7 @@ def aaditya(page: ft.Page):
                     'key': 'EmbedThumbnail',
                 }],
             }
-        elif "MP4" in dd1.selected:
+        elif dd1.selected_index == 2:
             dc = {
                 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
                 'outtmpl': '%(title)s.%(ext)s',
@@ -75,7 +75,7 @@ def aaditya(page: ft.Page):
                     'key': 'EmbedThumbnail',
                 }],
             }
-        elif "Only Vid" in dd1.selected:
+        elif dd1.selected_index == 3:
                     dc = {
                         'format': 'bestvideo',
                         'outtmpl': '%(title)s.%(ext)s',
@@ -263,21 +263,22 @@ def aaditya(page: ft.Page):
     page.run_task(colcyc)
     
     def seg_change(e):
-        if "MP4" or "Only Vid" in dd1.selected:
+        if dd1.selected_index == 2 or dd1.selected_index == 3:
             lbr.disabled = True
         else:
             lbr.disabled = False
         lbr.update()
         dd1.update()
 
-    dd1 = ft.SegmentedButton(
-        selected={"MP3"},
+    dd1 = ft.CupertinoSlidingSegmentedButton(
+        selected_index=1,
+        thumb_color=ft.Colors.RED_400,
         on_change=seg_change,
-        segments=[
-            ft.Segment(value="MP3", label=ft.Text("MP3")),
-            ft.Segment(value="MP4", label=ft.Text("MP4")),
-            ft.Segment(value="Only Vid", label=ft.Text("Only Video")),
-        ],
+        controls=[
+                    ft.Text("MP3"),
+                    ft.Text("MP4"),
+                    ft.Text("Only Video"),
+                ],
     )
     
     page.on_keyboard_event = shrt
@@ -289,8 +290,8 @@ def aaditya(page: ft.Page):
         ft.Row([tb],alignment=ft.MainAxisAlignment.END),
         ft.Row([ll],alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([l0], alignment=ft.MainAxisAlignment.CENTER,),
-        ft.Row([dd1,l,lbr], alignment=ft.MainAxisAlignment.CENTER),
-        ft.Row([b,rb,dirb], alignment=ft.MainAxisAlignment.CENTER),
+        ft.Row([l,lbr], alignment=ft.MainAxisAlignment.CENTER),
+        ft.Row([b,rb,dirb,dd1], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([l2,l3], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([as1], alignment=ft.MainAxisAlignment.CENTER,height=150),
     )
