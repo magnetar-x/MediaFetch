@@ -43,9 +43,6 @@ def aaditya(page: ft.Page):
         rb.bgcolor = "#CAE3F3" if rb.bgcolor == "#12181C" else "#12181C"
         page.update()
 
-    #Keyboard event listener
-    page.on_keyboard_event = shrt
-
     #Keyboard Shortcuts  
     def shrt(e : ft.KeyboardEvent):
         if ((e.key == 'T') & (e.ctrl == True)):
@@ -53,6 +50,8 @@ def aaditya(page: ft.Page):
         elif((e.key == "R")&(e.ctrl == True)):
             rfsh(e)      
 
+    #Keyboard event listener
+        page.on_keyboard_event = shrt
     #Progress Bar
     def progress_hook(d):
         if d['status'] == 'downloading':
@@ -318,6 +317,7 @@ def aaditya(page: ft.Page):
         )
 
     #----------------------
+    
     #Containers
 
     #App ready
