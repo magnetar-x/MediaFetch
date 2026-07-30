@@ -79,10 +79,13 @@ def aaditya(page: ft.Page):
             lbr.update()
             dd1.update()
 
+    #Directory picking
     def browse(e: ft.FilePickerResultEvent):
             os.chdir(f"{e.path}")
 
+    #Download function
     def dld(e):
+        #UI setup
         lbr.disabled = True
         l.opacity = 0.1
         b.disabled = True
@@ -98,6 +101,7 @@ def aaditya(page: ft.Page):
         a = l.value
         url = (a.partition("&"))[0]
 
+        #Choice determination
         if dd1.selected_index == 0:
             dc = {
                 'format': 'bestaudio/best',
@@ -140,6 +144,7 @@ def aaditya(page: ft.Page):
                 global t,br
                 t = dct.get('title')
         except:
+            #in case of download error
             l3.value = "ERROR"
             l3.color = "#ff0000"
             l2.visible = True
@@ -183,6 +188,7 @@ def aaditya(page: ft.Page):
         pb.visible = False
         pb_text.visible = False
         page.update()
+
         time.sleep(3)
         l1.value = "Refreshing"
         l1.color = "#037eb7"
@@ -198,22 +204,29 @@ def aaditya(page: ft.Page):
         page.update()
 
     #----------------------------------
+    #Media fetch color cycle text
     ll = ft.Text(
                 value="Media-Fetch", 
                  size=50, color="#e36e14",
                  weight=ft.FontWeight.BOLD
                  )
+
+    #Cycle icons
     l0 = ft.Text(
                 value="🎵🎧🎷🎸🎹🎺🎻🎶",
                 size=25, 
                 color="#f0c60c"
                 )
+
+    #Last downloaded text
     l2 = ft.Text(
                 value="Last Download : ",
                 size=30,
                 color="#d36b03",
                 visible=False
                 )
+
+    #Last downloaded item name
     l3 = ft.Text(
                 value=" ",
                  size=30,
