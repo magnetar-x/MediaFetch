@@ -4,12 +4,14 @@ import time
 import asyncio
 import colorsys
 import os
-
+from yt_dlp.utils import download_range_func
 #Default Directory - Music
 mf = os.path.join(os.path.expanduser('~'),'Music')
 os.makedirs(mf, exist_ok=True)
 os.chdir(mf)
 
+start_time = 0
+end_time = 0
 #----------------------------
 def aaditya(page: ft.Page):
     #Intro
@@ -99,10 +101,11 @@ def aaditya(page: ft.Page):
         page.update()
         a = l.value
         url = (a.partition("&"))[0]
-
         #Choice determination
         if dd1.selected_index == 0:
             dc = {
+                'download_ranges': download_range_func(None, [(start_time, end_time)]),
+                'force_keyframes_at_cuts': True,
                 'format': 'bestaudio/best',
                 'outtmpl': '%(title)s.%(ext)s',
                 'writethumbnail': True,
@@ -118,6 +121,8 @@ def aaditya(page: ft.Page):
             }
         elif dd1.selected_index == 1:
             dc = {
+                'download_ranges': download_range_func(None, [(start_time, end_time)]),
+                'force_keyframes_at_cuts': True,
                 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
                 'outtmpl': '%(title)s.%(ext)s',
                 'writethumbnail': True,
@@ -128,6 +133,8 @@ def aaditya(page: ft.Page):
             }
         elif dd1.selected_index == 2:
                     dc = {
+                         'download_ranges': download_range_func(None, [(start_time, end_time)]),
+                        'force_keyframes_at_cuts': True,
                         'format': 'bestvideo',
                         'outtmpl': '%(title)s.%(ext)s',
                         'writethumbnail': True,
@@ -241,6 +248,21 @@ def aaditya(page: ft.Page):
                  visible=False
                  )
 
+    #Vid Duration fetcher
+    def tm_fetch(e):
+            ydl_opts = {
+            "skip_download": True,  
+            "quiet": True           
+    }
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                a = l.value
+                url = (a.partition("&"))[0]
+                info = ydl.extract_info(url, download=False)
+                ds = info.get("duration")  
+                s = int(float(ds))    
+                end_timer_value_text.value = fmt_time(s) 
+                page.update()
+
     #Url entry box
     l = ft.TextField(width=500,
                 height=50, 
@@ -250,6 +272,7 @@ def aaditya(page: ft.Page):
                 color="#FCFCFC",
                 label="Youtube URL",
                 on_submit=dld,
+                on_change=tm_fetch,
                 opacity=1,
                 autofocus=True,
                 prefix_icon=ft.Icons.LINK,
@@ -399,9 +422,6 @@ def aaditya(page: ft.Page):
             msc = msc[-1] + msc[:-1]
             l0.update()
             await asyncio.sleep(0.5)
-            
-    page.run_task(txtcyc)
-    page.run_task(colcyc)
 
     #------------------------------------
     #Directory Browser
@@ -444,6 +464,60 @@ def aaditya(page: ft.Page):
         bgcolor="#12181C"
         )
 
+    #---Cupertino Time Picker-------
+
+    #Time format converter
+    def fmt_time(seconds):
+        h = int(seconds // 3600)
+        m = int((seconds % 3600) // 60)
+        s = int(seconds % 60)
+        return f"{h:02d}:{m:02d}:{s:02d}"
+    
+    #Start TP
+    start_timer_value_text = ft.Text("00:00:00")
+    def start_on_time_change(e):
+        s = int(float(e.data))
+        global start_time
+        start_time=s
+        start_timer_value_text.value = fmt_time(s)
+        page.update()
+
+    start_timer_picker = ft.CupertinoTimerPicker(
+        on_change=start_on_time_change,
+        mode=ft.CupertinoTimerPickerMode.HOUR_MINUTE_SECONDS,
+    )
+
+    start_bottom_sheet = ft.CupertinoBottomSheet(
+        height=216,
+        content=start_timer_picker,
+    )
+
+    def start_open_picker(e):
+        page.open(start_bottom_sheet)
+    
+    #End TP
+    end_timer_value_text = ft.Text("00:00:00")
+    def end_on_time_change(e):
+        s = int(float(e.data))
+        global end_time
+        end_time = s
+        end_timer_value_text.value = fmt_time(s)
+        page.update()
+
+    end_timer_picker = ft.CupertinoTimerPicker(
+        on_change=end_on_time_change,
+        mode=ft.CupertinoTimerPickerMode.HOUR_MINUTE_SECONDS,
+    )
+
+    end_bottom_sheet = ft.CupertinoBottomSheet(
+        height=216,
+        content=end_timer_picker,
+    )
+
+    def end_open_picker(e):
+        page.open(end_bottom_sheet)
+
+    #-----------------------
     #-----------------------
     #Grid
     page.add(
@@ -453,9 +527,25 @@ def aaditya(page: ft.Page):
         ft.Row([l,lbr], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([pb, pb_text], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([b,rb,dirb,dd1], alignment=ft.MainAxisAlignment.CENTER),
+        ft.Row(     
+                            controls=[
+                                ft.Text("Start Time:", size=17),
+                                ft.CupertinoButton(
+                                    on_click=start_open_picker,
+                                    content=start_timer_value_text,
+                                ),
+                                ft.Text("End Time:", size=17),
+                                        ft.CupertinoButton(
+                                            on_click=end_open_picker,
+                                            content=end_timer_value_text,
+                                        ),
+                            ],
+                        alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([l2,l3], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([frmt_indic], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([as1], alignment=ft.MainAxisAlignment.CENTER,height=150),
+        
     )
-
+    page.run_task(txtcyc)
+    page.run_task(colcyc)
 ft.app(target = aaditya, view=ft.AppView.FLET_APP)
