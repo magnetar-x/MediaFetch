@@ -267,72 +267,100 @@ def aaditya(page: ft.Page):
         width=80,
         text_align="center",
     )
+
+    #Download Progress bar
     pb = ft.ProgressBar(
         width=400, 
         value=0, 
         visible=False, 
         color="#e36e14"
         )
+
+    #Progress bar text
     pb_text = ft.Text(
         value="0%", 
         size=16, 
         visible=False)
+
+    #App ready indicator
     l1 = ft.Text(
         value="APP READY", 
         size=30, 
         color="#d4d101"
         ) 
+
+    #Download indicator
     l1dld = ft.Text(
         value="Downloading", 
         size=30, 
         color="#9900aa"
         )
+
+    #Error Indicator
     l1err = ft.Text(
         value="ERROR", 
         size=30, 
         color="#ff0000"
         )
+
+    #Refreshing Indicator
     l1rfrsh = ft.Text(
         value="Refreshing", 
         size=30, 
         color="#037eb7"
         )
+
+    #Successful Download Indicator
     l1ds = ft.Text(
         value="Download Successful", 
         size=30, 
         color="#04d200"
         )
-    
+
+    #----------------------
+    #Containers
+
+    #App ready
     cnt1 = ft.Container(
         l1,
         alignment=ft.alignment.center,
         width=200,
         height=200
     )
+
+    #Downloading
     cnt2 = ft.Container(
         l1dld,
         alignment=ft.alignment.center,
         width=200,
         height=200
     )
+
+    #Error
     cnt3 = ft.Container(
         l1err,
         alignment=ft.alignment.center,
         width=200,
         height=200
     )
+
+    #Refresh
     cnt4 = ft.Container(
         l1rfrsh,
         alignment=ft.alignment.center,
         width=200,
         height=200
     )
+
+    #Successful Download
     cnt5 = ft.Container(
         l1ds,
         alignment=ft.alignment.center,
         width=400,
         height=400
     )
+
+    #Format Switcher
     as1 = ft.AnimatedSwitcher(
         cnt1,
         transition=ft.AnimatedSwitcherTransition.SCALE,
@@ -341,10 +369,10 @@ def aaditya(page: ft.Page):
         switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
         switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
     ) 
+
     #------------------------------
     
     #Async
-    #---------------------------------
 
     #Text color cycle
     async def colcyc():
