@@ -233,12 +233,16 @@ def aaditya(page: ft.Page):
                  color="#00ff00",
                  visible=False
                  )
+
+    #Error message
     frmt_indic = ft.Text(
                 value=" ",
                  size=30,
                  color="#ff0080",
                  visible=False
                  )
+
+    #Url entry box
     l = ft.TextField(width=500,
                 height=50, 
                 read_only=False, 
@@ -252,6 +256,8 @@ def aaditya(page: ft.Page):
                 prefix_icon=ft.Icons.LINK,
                 border=ft.InputBorder.UNDERLINE
                 )
+
+    #Bit-rate box
     lbr = ft.TextField(
         value = 192,
         bgcolor="#343433", 
