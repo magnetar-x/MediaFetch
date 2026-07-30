@@ -5,14 +5,18 @@ import asyncio
 import colorsys
 import os
 
+#Default Directory - Music
 mf = os.path.join(os.path.expanduser('~'),'Music')
 os.makedirs(mf, exist_ok=True)
 os.chdir(mf)
 
+#----------------------------
 def aaditya(page: ft.Page):
+    #Intro
     ft.title = "Media-Fetch"
     page.vertical_alignment = ft.MainAxisAlignment.START
-    
+
+    #Refresh Function
     def rfsh(e):
         l.opacity = 1
         b.disabled = False
@@ -26,7 +30,8 @@ def aaditya(page: ft.Page):
         l.value = ""
         l1.color = "#d4d101"
         page.update()
-        
+
+    #Theme toggle
     def tgl(e):
         page.theme_mode = ft.ThemeMode.DARK if page.theme_mode == ft.ThemeMode.LIGHT else ft.ThemeMode.LIGHT
         tb.icon = ft.Icons.DARK_MODE if tb.icon == ft.Icons.SUNNY else ft.Icons.SUNNY
@@ -37,13 +42,18 @@ def aaditya(page: ft.Page):
         lbr.color  = "#FCFCFC" if lbr.color == "#343433" else "#343433"
         rb.bgcolor = "#CAE3F3" if rb.bgcolor == "#12181C" else "#12181C"
         page.update()
-        
+
+    #Keyboard event listener
+    page.on_keyboard_event = shrt
+
+    #Keyboard Shortcuts  
     def shrt(e : ft.KeyboardEvent):
         if ((e.key == 'T') & (e.ctrl == True)):
             tgl(e)
         elif((e.key == "R")&(e.ctrl == True)):
             rfsh(e)      
 
+    #Progress Bar
     def progress_hook(d):
         if d['status'] == 'downloading':
             total = d.get('total_bytes') or d.get('total_bytes_estimate')
@@ -59,7 +69,19 @@ def aaditya(page: ft.Page):
             pb.value = 1.0
             pb_text.value = "Processing..."
             page.update()
-         
+
+    #Change in UI behaviour according to selected format
+    def seg_change(e):
+            if dd1.selected_index == 2 or dd1.selected_index == 3:
+                lbr.disabled = True
+            else:
+                lbr.disabled = False
+            lbr.update()
+            dd1.update()
+
+    def browse(e: ft.FilePickerResultEvent):
+            os.chdir(f"{e.path}")
+
     def dld(e):
         lbr.disabled = True
         l.opacity = 0.1
@@ -174,7 +196,8 @@ def aaditya(page: ft.Page):
         l1.color = "#d4d101"
         as1.content = cnt1
         page.update()
-        
+
+    #----------------------------------
     ll = ft.Text(
                 value="Media-Fetch", 
                  size=50, color="#e36e14",
@@ -225,13 +248,41 @@ def aaditya(page: ft.Page):
         width=80,
         text_align="center",
     )
-    pb = ft.ProgressBar(width=400, value=0, visible=False, color="#e36e14")
-    pb_text = ft.Text(value="0%", size=16, visible=False)
-    l1 = ft.Text(value="APP READY", size=30, color="#d4d101") 
-    l1dld = ft.Text(value="Downloading", size=30, color="#9900aa")
-    l1err = ft.Text(value="ERROR", size=30, color="#ff0000")
-    l1rfrsh = ft.Text(value="Refreshing", size=30, color="#037eb7")
-    l1ds = ft.Text(value="Download Successful", size=30, color="#04d200")
+    pb = ft.ProgressBar(
+        width=400, 
+        value=0, 
+        visible=False, 
+        color="#e36e14"
+        )
+    pb_text = ft.Text(
+        value="0%", 
+        size=16, 
+        visible=False)
+    l1 = ft.Text(
+        value="APP READY", 
+        size=30, 
+        color="#d4d101"
+        ) 
+    l1dld = ft.Text(
+        value="Downloading", 
+        size=30, 
+        color="#9900aa"
+        )
+    l1err = ft.Text(
+        value="ERROR", 
+        size=30, 
+        color="#ff0000"
+        )
+    l1rfrsh = ft.Text(
+        value="Refreshing", 
+        size=30, 
+        color="#037eb7"
+        )
+    l1ds = ft.Text(
+        value="Download Successful", 
+        size=30, 
+        color="#04d200"
+        )
     
     cnt1 = ft.Container(
         l1,
@@ -271,16 +322,12 @@ def aaditya(page: ft.Page):
         switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
         switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
     ) 
+    #------------------------------
     
-    def browse(e: ft.FilePickerResultEvent):
-        os.chdir(f"{e.path}")
-    fp = ft.FilePicker(on_result=browse)
-    page.overlay.append(fp)
-    dirb= ft.ElevatedButton(
-        "Select Directory",icon=ft.Icons.FOLDER,
-        on_click=lambda _: fp.get_directory_path()
-    )
-    
+    #Async
+    #---------------------------------
+
+    #Text color cycle
     async def colcyc():
         i = 0
         h = 0
@@ -296,7 +343,8 @@ def aaditya(page: ft.Page):
             ll.update()
             l.update()
             await asyncio.sleep(0.05)
-            
+
+    #Icon cycle    
     async def txtcyc():
         msc = "🎵🎧🎷🎸🎹🎺🎻🎶"
         while True:
@@ -307,15 +355,17 @@ def aaditya(page: ft.Page):
             
     page.run_task(txtcyc)
     page.run_task(colcyc)
-    
-    def seg_change(e):
-        if dd1.selected_index == 2 or dd1.selected_index == 3:
-            lbr.disabled = True
-        else:
-            lbr.disabled = False
-        lbr.update()
-        dd1.update()
 
+    #------------------------------------
+    #Directory Browser
+    fp = ft.FilePicker(on_result=browse)
+    page.overlay.append(fp)
+    dirb= ft.ElevatedButton(
+            "Select Directory",icon=ft.Icons.FOLDER,
+            on_click=lambda _: fp.get_directory_path()
+        )
+
+    #Format choice slider
     dd1 = ft.CupertinoSlidingSegmentedButton(
         selected_index=1,
         thumb_color=ft.Colors.RED_400,
@@ -326,23 +376,29 @@ def aaditya(page: ft.Page):
                     ft.Text("Only Video"),
                 ],
     )
-    
-    page.on_keyboard_event = shrt
+
+    #Theme Changer
     tb = ft.ElevatedButton(
         text="LIGHT",
         icon=ft.Icons.SUNNY, 
         on_click = tgl
         )
+    
+    #Downloader
     b = ft.ElevatedButton(
         text="Download", 
         icon=ft.Icons.MUSIC_NOTE, 
         on_click=dld)
+
+    #Refresh
     rb = ft.FloatingActionButton(
         icon=ft.Icons.LOOP, 
         on_click=rfsh,mini=True,
         bgcolor="#12181C"
         )
-    
+
+    #-----------------------
+    #Grid
     page.add(
         ft.Row([tb],alignment=ft.MainAxisAlignment.END),
         ft.Row([ll],alignment=ft.MainAxisAlignment.CENTER),
